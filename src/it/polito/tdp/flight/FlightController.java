@@ -30,8 +30,28 @@ public class FlightController {
 
 	@FXML
 	void doCreaGrafo(ActionEvent event) {
+		if(txtDistanzaInput.getText()==null ) {
+			txtResult.setText("Inserire un numero nella casella!");
+			return;
+		}
+		else {
+		double k;
+		try {
+    		k = Double.parseDouble(txtDistanzaInput.getText());
+    	} catch(NumberFormatException e) {
+    		txtResult.appendText("Devi inserire un numero");
+    		return;
+    	}
+		model.creaGrafo(Double.parseDouble(txtDistanzaInput.getText()));
+		if(model.testRaggiungibili()==true) {
+			txtResult.setText("Ogni aereoporto può raggiungere gli altri\n");
+			
+		}
+		else
+			txtResult.setText("Non tutti gli aereoporti sono collegati\n");
 		
-	}
+	}txtResult.appendText("Aereoporto raggiungibile da Fiumicino più lontano: "+model.piùLontanoDaFiumicino());
+		}
 
 	@FXML
 	void doSimula(ActionEvent event) {

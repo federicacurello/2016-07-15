@@ -1,5 +1,7 @@
 package it.polito.tdp.flight.model;
 
+import com.javadocmd.simplelatlng.LatLng;
+
 public class Airport {
 
 	private int airportId;
@@ -13,6 +15,7 @@ public class Airport {
 	private float timezone;
 	private String dst;
 	private String tz;
+	private LatLng coords;
 
 	public Airport(int airportId, String name, String city, String country, String iataFaa, String icao,
 			double latitude, double longitude, float timezone, String dst, String tz) {
@@ -28,6 +31,7 @@ public class Airport {
 		this.timezone = timezone;
 		this.dst = dst;
 		this.tz = tz;
+		coords= new LatLng(latitude, longitude);
 	}
 
 	public int getAirportId() {
@@ -139,6 +143,7 @@ public class Airport {
 			return false;
 		return true;
 	}
+	
 
 	// @Override
 	// public String toString() {
@@ -148,6 +153,14 @@ public class Airport {
 	// ", longitude=" + longitude
 	// + ", timezone=" + timezone + ", dst=" + dst + ", tz=" + tz + "]";
 	// }
+
+	public LatLng getCoords() {
+		return coords;
+	}
+
+	public void setCoords(LatLng coords) {
+		this.coords = coords;
+	}
 
 	@Override
 	public String toString() {
