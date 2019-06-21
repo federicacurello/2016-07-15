@@ -1,5 +1,6 @@
 package it.polito.tdp.flight.model;
 
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,21 +12,29 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
+import com.javadocmd.simplelatlng.LatLngTool;
+import com.javadocmd.simplelatlng.util.LengthUnit;
+
+
 import it.polito.tdp.flight.db.FlightDAO;
 
 public class Model {
 	SimpleDirectedWeightedGraph<Airport, DefaultWeightedEdge> grafo;
 	FlightDAO dao;
 	Map<Integer, Airport> air;
+	List<Connessione> connessioni;
+	Simulatore sim;
 
 	public Model() {
 		this.grafo = new SimpleDirectedWeightedGraph<Airport, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		dao= new FlightDAO();
 		air= new HashMap<Integer, Airport>();
+		sim= new Simulatore();
 	}
 
 	public void creaGrafo(double distanzaMax) {
 		Graphs.addAllVertices(grafo, dao.getAllAirports(air));
+		connessioni=dao.trovaArchi(distanzaMax, air);
 		for(Connessione c: dao.trovaArchi(distanzaMax, air)) {
 			Graphs.addEdge(grafo, c.getPartenza(), c.getArrivo(), c.getDurata());
 		}
@@ -57,12 +66,21 @@ public class Model {
 
 public Airport piùLontanoDaFiumicino() {
 	List<Airport> raggiunti= new LinkedList<Airport>();
+	double distanzaMax=0;
+	Airport a= null;
+
 	GraphIterator<Airport, DefaultWeightedEdge> it= new BreadthFirstIterator<>(grafo, this.getFiumicino());
 			while(it.hasNext()) {
-				raggiunti.add(it.next());
+				Airport next= it.next();
+				double distanza= LatLngTool.distance(this.getFiumicino().getCoords(), next.getCoords(), LengthUnit.KILOMETER );
+				raggiunti.add(next);
+				if(distanza>distanzaMax) {
+					distanzaMax=distanza;
+					a= next;
+				}
 			}
 		
-	Airport a= raggiunti.get(raggiunti.size()-1);
+	
 	return a;
 	
 }
@@ -73,5 +91,18 @@ public Airport getFiumicino() {
 			res= a;
 	}
 	return res;
+}
+public void simula(int k) {
+	sim.init(grafo, k);
+	sim.run();
+}
+
+public String getStanziali() {
+	String s="\n";
+	for(Airport a: sim.getMap().keySet()) {
+		if(sim.getMap().get(a)!=0)
+		s+= a.getName()+ " numero di persone: "+ sim.getMap().get(a)+"\n";
+	}
+	return s;
 }
 }

@@ -3,6 +3,7 @@ package it.polito.tdp.flight;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.flight.model.Airport;
 import it.polito.tdp.flight.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,6 +56,24 @@ public class FlightController {
 
 	@FXML
 	void doSimula(ActionEvent event) {
+		if(txtPasseggeriInput.getText()==null ) {
+			txtResult.setText("Inserire un numero nella casella!");
+			return;
+		}
+		int k;
+		try {
+    		k = Integer.parseInt(txtPasseggeriInput.getText());
+    		model.simula(k);
+    		txtResult.appendText(model.getStanziali());
+    		
+    		
+    		
+    		
+    	} catch(NumberFormatException e) {
+    		txtResult.appendText("Devi inserire un numero");
+    		return;
+    	}
+		
 		
 	}
 
